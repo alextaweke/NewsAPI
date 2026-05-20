@@ -30,7 +30,29 @@ CREATE TABLE IF NOT EXISTS articles (
     CHECK (CHAR_LENGTH(content) >= 50)
 );
 
+CREATE TABLE IF NOT EXISTS read_logs (
+    id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    article_id VARCHAR(36) NOT NULL,
+    reader_id VARCHAR(36) NULL,
+    read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
+    FOREIGN KEY (reader_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_article_id (article_id),
+    INDEX idx_read_at (read_at),
+    INDEX idx_article_read_at (article_id, read_at)
+);
 
+CREATE TABLE IF NOT EXISTS daily_analytics (
+    id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    article_id VARCHAR(36) NOT NULL,
+    view_count INT DEFAULT 0,
+    date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_article_date (article_id, date),
+    INDEX idx_article_date (article_id, date)
+);
 
 
 
