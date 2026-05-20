@@ -35,8 +35,33 @@ A production-ready RESTful API for a news platform with author content managemen
 ## Quick Start
 
 ### 1. Clone and Install
-
-```bash
-git clone <your-repo-url>
+git clone https://github.com/alextaweke/NewsAPI
 cd afrolink-news-api
 npm install
+
+##Environment Setup
+
+
+JWT_SECRET=your-super-secret-jwt-key-change-this
+JWT_EXPIRES_IN=24h
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+NODE_ENV=development
+
+
+
+RATE_LIMIT_WINDOW_MS=10000
+RATE_LIMIT_MAX_REQUESTS=10
+
+DEBUG=True
+
+DB_NAME=your database name
+DB_USER=root
+DB_PASSWORD=your database password
+DB_HOST=localhost
+DB_PORT=3306
+
+##Start Application
+npm run dev
