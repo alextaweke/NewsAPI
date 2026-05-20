@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import prisma from "../prisma/client";
+import User from "../models/User";
 import { generateToken } from "../config/jwt";
 import { signupSchema, loginSchema } from "../validators/schemas";
-import bcrypt from "bcrypt";
+
 export const signup = async (req: Request, res: Response) => {
   try {
     const { error } = signupSchema.validate(req.body);
@@ -17,7 +17,7 @@ export const signup = async (req: Request, res: Response) => {
 
     const { name, email, password, role } = req.body;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -27,14 +27,13 @@ export const signup = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password,
-        role,
-      },
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role,
     });
+
     const token = generateToken(user.id, user.role);
 
     return res.status(201).json({
@@ -76,7 +75,7 @@ export const login = async (req: Request, res: Response) => {
 
     const { email, password } = req.body;
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -86,7 +85,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
