@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/database";
 import { redisClient } from "./config/redis";
 import { errorHandler } from "./middleware/errorHandler";
-
+import articleRoutes from "./routes/articleRoutes";
 import authRoutes from "./routes/authRoutes";
 import { apiLimiter } from "./middleware/rateLimiter";
 
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", apiLimiter);
 // Routes
 app.use("/api/auth", authRoutes);
-
+app.use("/api/articles", articleRoutes);
 // Health check
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", timestamp: new Date() });
